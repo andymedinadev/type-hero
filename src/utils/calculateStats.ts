@@ -1,7 +1,7 @@
 import type { TypingStats } from '../types';
 
 export function calculateStats(input: string, target: string, timeMs: number): TypingStats {
-  const timeMinutes = timeMs / 60000;
+  const timeMinutes = timeMs / 60000 || 1 / 60;
   let correctChars = 0;
   let errors = 0;
 
