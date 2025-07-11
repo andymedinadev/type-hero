@@ -20,6 +20,7 @@ export function useTypingGame() {
   const hiddenInputRef = useRef<HTMLInputElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLDivElement>(null);
+  const typeSoundRef = useRef<HTMLAudioElement | null>(null);
 
   // Función para enfocar el área de texto
   const focusTextArea = useCallback(() => {
@@ -79,6 +80,13 @@ export function useTypingGame() {
     }
   };
 
+  // Reproducir sonido al tipear
+  const playTypeSound = () => {
+    if (!typeSoundRef.current) return;
+    typeSoundRef.current.currentTime = 0;
+    typeSoundRef.current.play();
+  };
+
   // Manejar cambios en el input
   const handleInputChange = (e: TargetedEvent<HTMLInputElement, Event>) => {
     const inputElement = e.target as HTMLInputElement;
@@ -95,6 +103,8 @@ export function useTypingGame() {
     if (value.length > targetText.length) {
       return;
     }
+
+    playTypeSound();
 
     setUserInput(value);
     setCurrentIndex(value.length);
@@ -117,6 +127,12 @@ export function useTypingGame() {
   useEffect(() => {
     resetGame();
   }, [resetGame]);
+
+  // Configurar sonido
+  useEffect(() => {
+    typeSoundRef.current = new Audio('/sounds/typeSound.mp3');
+    typeSoundRef.current.volume = 0.3;
+  }, []);
 
   // Contador de tiempo
   useEffect(() => {
