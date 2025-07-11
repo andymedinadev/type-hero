@@ -7,13 +7,13 @@ export function App() {
     userInput,
     currentIndex,
     gameState,
-    startTime,
     stats,
     textLines,
     isTextFocused,
     hiddenInputRef,
     textContainerRef,
     textAreaRef,
+    elapsedTime,
     handleInputChange,
     handleKeyDown,
     focusTextArea,
@@ -49,10 +49,8 @@ export function App() {
                         Progreso: {userInput.length}/{targetText.length} caracteres
                       </div>
                       <div className="flex items-center gap-4">
-                        {startTime && (
-                          <span className="font-medium">
-                            Tiempo: {Math.floor((Date.now() - startTime) / 1000)}s
-                          </span>
+                        {elapsedTime !== null && (
+                          <span className="font-medium">Tiempo: {elapsedTime}s</span>
                         )}
                         <button
                           onClick={resetGame}

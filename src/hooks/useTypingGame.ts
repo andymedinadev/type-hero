@@ -11,8 +11,7 @@ export function useTypingGame() {
   const [userInput, setUserInput] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [gameState, setGameState] = useState<GameState>('waiting');
-  const [startTime, setStartTime] = useState<number | null>(null);
-  // const [endTime, setEndTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [stats, setStats] = useState<TypingStats | null>(null);
   const [textLines, setTextLines] = useState<string[]>([]);
   const [isTextFocused, setIsTextFocused] = useState(false);
@@ -43,8 +42,7 @@ export function useTypingGame() {
     setUserInput('');
     setCurrentIndex(0);
     setGameState('waiting');
-    setStartTime(null);
-    // setEndTime(null);
+    setElapsedTime(0);
     setStats(null);
     setIsTextFocused(false);
 
@@ -92,7 +90,6 @@ export function useTypingGame() {
 
     if (gameState === 'waiting' && value.length === 1) {
       setGameState('typing');
-      setStartTime(Date.now());
     }
 
     if (value.length > targetText.length) {
@@ -103,13 +100,11 @@ export function useTypingGame() {
     setCurrentIndex(value.length);
 
     if (value.length === targetText.length) {
-      const endTime = Date.now();
-      // setEndTime(endTime);
       setGameState('finished');
       setIsTextFocused(false);
 
-      if (startTime) {
-        const timeElapsed = endTime - startTime;
+      if (elapsedTime > 0) {
+        const timeElapsed = elapsedTime * 1000;
         const finalStats = calculateStats(value, targetText, timeElapsed);
         setStats(finalStats);
       }
@@ -117,20 +112,6 @@ export function useTypingGame() {
   };
 
   // Effects
-
-  // Manejar redimensionamiento de ventana
-  useEffect(() => {
-    const handleResize = () => {
-      if (textContainerRef.current && targetText) {
-        const containerWidth = textContainerRef.current.offsetWidth;
-        const lines = splitTextIntoLines(targetText, containerWidth);
-        setTextLines(lines);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [targetText]);
 
   // Inicializar con texto aleatorio al cargar
   useEffect(() => {
@@ -146,18 +127,45 @@ export function useTypingGame() {
     return () => clearTimeout(timer);
   }, [focusTextArea]);
 
+  // Contador de tiempo
+  useEffect(() => {
+    if (gameState === 'typing') {
+      const interval = setInterval(() => {
+        setElapsedTime((prev) => (prev !== null ? prev + 1 : 1));
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } else if (gameState === 'waiting') {
+      setElapsedTime(0);
+    }
+  }, [gameState]);
+
+  // Manejar redimensionamiento de ventana
+  useEffect(() => {
+    const handleResize = () => {
+      if (textContainerRef.current && targetText) {
+        const containerWidth = textContainerRef.current.offsetWidth;
+        const lines = splitTextIntoLines(targetText, containerWidth);
+        setTextLines(lines);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [targetText]);
+
   return {
     targetText,
     userInput,
     currentIndex,
     gameState,
-    startTime,
     stats,
     textLines,
     isTextFocused,
     hiddenInputRef,
     textContainerRef,
     textAreaRef,
+    elapsedTime,
     handleInputChange,
     handleKeyDown,
     focusTextArea,
