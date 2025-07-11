@@ -118,15 +118,6 @@ export function useTypingGame() {
     resetGame();
   }, [resetGame]);
 
-  // Enfocar automáticamente al cargar
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      focusTextArea();
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [focusTextArea]);
-
   // Contador de tiempo
   useEffect(() => {
     if (gameState === 'typing') {
