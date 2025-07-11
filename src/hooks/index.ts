@@ -1,0 +1,1 @@
+export { useTypingGame } from './useTypingGame';
