@@ -23,7 +23,7 @@ export function App() {
   } = useTypingGame();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-800 p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="mx-auto w-full max-w-4xl">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -43,7 +43,7 @@ export function App() {
                   </div>
                 )}
                 {gameState === 'typing' && (
-                  <div className="m-4 rounded-lg bg-zinc-900 p-4 shadow-sm">
+                  <div className="m-4 rounded-lg bg-zinc-950 p-4 shadow-sm">
                     <div className="flex items-center justify-between text-sm text-white">
                       <div className="font-medium">
                         Progreso: {userInput.length}/{targetText.length} caracteres

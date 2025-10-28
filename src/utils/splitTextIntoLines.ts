@@ -1,7 +1,7 @@
 export function splitTextIntoLines(text: string, containerWidth: number): string[] {
   if (!containerWidth || containerWidth === 0) return [text];
 
-  const charWidth = 18;
+  const charWidth = 19;
   const maxCharsPerLine = Math.floor(containerWidth / charWidth);
 
   const words = text.split(' ');
