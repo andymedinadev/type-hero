@@ -31,27 +31,44 @@ export function App() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="mx-auto w-full max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-bold text-white">Type Hero</h1>
-        </div>
-        <div className="flex flex-col items-center">
-          <h2 className="m-2 text-xl">Mode</h2>
-          <div className="flex">
-            <button
-              className="m-2 rounded-2xl bg-blue-700 px-5 py-2.5 font-medium"
-              onClick={() => setMode('classic')}
-            >
-              Classic
-            </button>
-            <button
-              className="m-2 rounded-2xl bg-blue-700 px-5 py-2.5 font-medium"
-              onClick={() => setMode('timer')}
-            >
-              Timer
-            </button>
+        <header className="flex flex-col gap-5 rounded-3xl border border-white/5 bg-zinc-950/70 px-6 py-5 backdrop-blur md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-400/20 text-2xl text-amber-300">
+              🙌
+            </span>
+            <div>
+              <h1 className="text-lg font-semibold tracking-wide text-zinc-100">Type Hero</h1>
+              <p className="text-sm text-zinc-400">Domina tu velocidad y precisión</p>
+            </div>
           </div>
-        </div>
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-wrap justify-end gap-2 rounded-3xl border border-white/5 bg-white/5 p-1 text-xs font-medium tracking-widest text-zinc-400 uppercase">
+              {['classic', 'timer'].map((modeKey) => {
+                const isActive = modeKey === mode;
+                const label = modeKey;
+                return (
+                  <button
+                    key={modeKey}
+                    onClick={() => {
+                      if (modeKey !== mode) {
+                        setMode(modeKey as GameMode);
+                      }
+                    }}
+                    className={`rounded-2xl px-3 py-1 transition-colors ${
+                      isActive
+                        ? 'bg-amber-400/20 text-amber-200 shadow-[0_0_0_1px_rgba(251,191,36,0.25)]'
+                        : 'text-zinc-400 hover:text-zinc-100'
+                    }`}
+                    aria-pressed={isActive}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </header>
 
         {/* Área principal de tipeo */}
         <div className="pt-2 pb-8">
