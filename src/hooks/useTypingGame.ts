@@ -110,7 +110,7 @@ export function useTypingGame(mode: GameMode = 'classic') {
     setCurrentIndex(value.length);
 
     if (value.length === targetText.length) {
-      setGameState('finished');
+      finishGame();
       setIsTextFocused(false);
 
       if (elapsedTime > 0) {
@@ -120,6 +120,18 @@ export function useTypingGame(mode: GameMode = 'classic') {
       }
     }
   };
+
+  const finishGame = useCallback(() => {
+    setGameState((prev) => {
+      if (prev === 'finished') return prev;
+
+      const stats = calculateStats(userInput, targetText, elapsedTime);
+
+      setStats(stats);
+
+      return 'finished';
+    });
+  }, [userInput, targetText, elapsedTime]);
 
   // Effects
 
@@ -148,13 +160,13 @@ export function useTypingGame(mode: GameMode = 'classic') {
   const remainingTime = Math.max(0, TIME_LIMIT - elapsedTime);
 
   if (mode === 'timer' && elapsedTime >= TIME_LIMIT) {
-    setGameState('finished');
+    finishGame();
   }
 
   // modo timer -> finalizar a los 60seg
   useEffect(() => {
     if (mode === 'timer' && gameState === 'typing' && elapsedTime >= 60) {
-      setGameState('finished');
+      finishGame();
     }
   }, [elapsedTime, gameState, mode]);
 
