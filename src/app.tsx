@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import { TypingText, Results } from './components';
 import { useTypingGame } from './hooks';
+import { calculateStats, formatSeconds } from './utils';
 import type { GameMode } from './types';
 
 export function App() {
@@ -12,7 +13,6 @@ export function App() {
     userInput,
     currentIndex,
     gameState,
-    stats,
     textLines,
     isTextFocused,
     hiddenInputRef,
@@ -27,6 +27,16 @@ export function App() {
     resetGame,
     setIsTextFocused,
   } = useTypingGame(mode);
+
+  let formattedTime;
+
+  if (mode === 'timer') {
+    formattedTime = formatSeconds(remainingTime);
+  } else {
+    formattedTime = formatSeconds(elapsedTime);
+  }
+
+  let stats = calculateStats(userInput, targetText, elapsedTime, mode);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -74,31 +84,61 @@ export function App() {
         <div className="pt-2 pb-8">
           {gameState !== 'finished' ? (
             <>
-              <div className="m-4 rounded-lg bg-zinc-950 p-4 shadow-sm">
-                <div className="flex items-center justify-between text-sm text-white">
-                  <div className="font-medium">
-                    Progreso: {userInput.length}/{targetText.length} caracteres
+              <section className="my-4 rounded-3xl border border-white/5 bg-zinc-950/70 p-8">
+                <div className="flex flex-col gap-6">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-zinc-400 md:grid-cols-4">
+                    <div className="rounded-2xl bg-white/5 p-4">
+                      <div className="text-xs tracking-widest text-zinc-500 uppercase">Ritmo</div>
+                      <div className="mt-2 text-3xl font-semibold text-amber-300">{stats?.wpm}</div>
+                      <p className="text-xs text-zinc-500">Palabras por minuto</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4">
+                      <div className="text-xs tracking-widest text-zinc-500 uppercase">
+                        Precisión
+                      </div>
+                      <div className="mt-2 text-3xl font-semibold text-emerald-400">
+                        {stats.accuracy}%
+                      </div>
+                      <p className="text-xs text-zinc-500">{stats.correctChars} correctos</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4">
+                      <div className="text-xs tracking-widest text-zinc-500 uppercase">
+                        {mode === 'classic' ? 'Tiempo' : 'Tiempo restante'}
+                      </div>
+                      <div className="mt-2 text-3xl font-semibold text-zinc-100">
+                        {formattedTime}
+                      </div>
+                      <p className="text-xs text-zinc-500">
+                        {mode === 'classic' ? 'En progreso' : 'Tiempo restante'}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white/5 p-4">
+                      <div className="text-xs tracking-widest text-zinc-500 uppercase">Errores</div>
+                      <div className="mt-2 text-3xl font-semibold text-rose-500">
+                        {stats.errors}
+                      </div>
+                      <p className="text-xs text-zinc-500">{userInput.length} caracteres</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {gameState === 'typing' && elapsedTime !== null && (
-                      <>
-                        {mode === 'classic' && (
-                          <span className="font-medium">Tiempo: {elapsedTime}s</span>
-                        )}
-                        {mode === 'timer' && (
-                          <span className="font-medium">{remainingTime}s restantes</span>
-                        )}
-                      </>
-                    )}
-                    <button
-                      onClick={resetGame}
-                      className="rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
-                    >
-                      Reiniciar
-                    </button>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs tracking-widest text-zinc-500 uppercase">
+                      <span>Progreso</span>
+                      <span className="text-amber-200">
+                        {((userInput.length / targetText.length) * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 transition-all"
+                        style={{
+                          width: `${((userInput.length / targetText.length) * 100).toFixed(0)}%`,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
 
               {/* Texto a escribir */}
               <div
