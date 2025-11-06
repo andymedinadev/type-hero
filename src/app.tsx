@@ -110,8 +110,10 @@ export function App() {
               {/* Texto a escribir */}
               <div
                 ref={textAreaRef}
-                className={`max-h-[400px] min-h-[300px] cursor-text overflow-y-auto rounded-lg p-8 transition-colors ${
-                  isTextFocused ? 'border border-white' : ''
+                className={`max-h-[400px] min-h-[300px] cursor-text rounded-3xl bg-black/40 p-8 focus-within:border-amber-300/60 ${
+                  isTextFocused
+                    ? 'border-amber-400/50 shadow-[0_0_0_2px_rgba(251,191,36,0.15)]'
+                    : ''
                 }`}
                 onClick={focusTextArea}
               >

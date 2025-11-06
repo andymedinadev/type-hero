@@ -24,18 +24,18 @@ export function TypingText({
           {line.split('').map((originalChar, charInLineIndex) => {
             const globalIndex = charIndex++;
             let displayChar = originalChar;
-            let className = 'text-gray-400';
+            let className = 'text-zinc-600';
 
             if (globalIndex < userInput.length) {
               const userChar = userInput[globalIndex];
               if (userChar === originalChar) {
-                className = originalChar === ' ' ? 'text-gray-400' : 'text-green-500';
+                className = originalChar === ' ' ? 'text-zinc-600' : 'text-emerald-400';
               } else {
                 displayChar = userChar === ' ' ? '_' : userChar;
-                className = 'text-red-500';
+                className = 'text-rose-500';
               }
             } else if (globalIndex === currentIndex && (gameState === 'typing' || isTextFocused)) {
-              className = 'text-gray-800 bg-blue-200';
+              className = 'text-zinc-950 bg-amber-300 shadow-[0_0_0_4px_rgba(251,191,36,0.1)]';
             }
 
             return (
@@ -53,14 +53,14 @@ export function TypingText({
               <span
                 className={`${
                   charIndex === currentIndex && (gameState === 'typing' || isTextFocused)
-                    ? 'bg-blue-200 text-gray-800'
+                    ? 'bg-amber-300 text-zinc-950 shadow-[0_0_0_4px_rgba(251,191,36,0.1)]'
                     : charIndex < userInput.length
                       ? (() => {
                           const userChar = userInput[charIndex];
-                          if (userChar === ' ') return 'text-gray-400';
-                          else return 'text-red-500';
+                          if (userChar === ' ') return 'text-zinc-600';
+                          else return 'text-rose-500';
                         })()
-                      : 'text-gray-400'
+                      : 'text-zinc-600'
                 } rounded-sm px-0.5 transition-all duration-200 ease-out`}
               >
                 {charIndex < userInput.length
