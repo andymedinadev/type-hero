@@ -74,37 +74,30 @@ export function App() {
         <div className="pt-2 pb-8">
           {gameState !== 'finished' ? (
             <>
-              <div>
-                {gameState === 'waiting' && (
-                  <div className="m-4 p-4 text-center">
-                    <span className="text-lg font-medium text-white">
-                      🔽 Haz click en el texto para empezar a tipear 🔽
-                    </span>
+              <div className="m-4 rounded-lg bg-zinc-950 p-4 shadow-sm">
+                <div className="flex items-center justify-between text-sm text-white">
+                  <div className="font-medium">
+                    Progreso: {userInput.length}/{targetText.length} caracteres
                   </div>
-                )}
-                {gameState === 'typing' && (
-                  <div className="m-4 rounded-lg bg-zinc-950 p-4 shadow-sm">
-                    <div className="flex items-center justify-between text-sm text-white">
-                      <div className="font-medium">
-                        Progreso: {userInput.length}/{targetText.length} caracteres
-                      </div>
-                      <div className="flex items-center gap-4">
-                        {elapsedTime !== null && mode === 'classic' && (
+                  <div className="flex items-center gap-4">
+                    {gameState === 'typing' && elapsedTime !== null && (
+                      <>
+                        {mode === 'classic' && (
                           <span className="font-medium">Tiempo: {elapsedTime}s</span>
                         )}
-                        {elapsedTime !== null && mode === 'timer' && (
+                        {mode === 'timer' && (
                           <span className="font-medium">{remainingTime}s restantes</span>
                         )}
-                        <button
-                          onClick={resetGame}
-                          className="rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
-                        >
-                          Reiniciar
-                        </button>
-                      </div>
-                    </div>
+                      </>
+                    )}
+                    <button
+                      onClick={resetGame}
+                      className="rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+                    >
+                      Reiniciar
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Texto a escribir */}
