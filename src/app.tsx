@@ -1,6 +1,6 @@
-import { useState } from 'preact/hooks';
+import { useState, useCallback } from 'preact/hooks';
 
-import { TypingText, Results } from './components';
+import { TypingText, StatCard, Results } from './components';
 import { useTypingGame } from './hooks';
 import { calculateStats, formatSeconds } from './utils';
 import type { GameMode } from './types';
@@ -28,15 +28,23 @@ export function App() {
     setIsTextFocused,
   } = useTypingGame(mode);
 
-  let formattedTime;
+  const formattedTime =
+    mode === 'timer' ? formatSeconds(remainingTime) : formatSeconds(elapsedTime);
 
-  if (mode === 'timer') {
-    formattedTime = formatSeconds(remainingTime);
-  } else {
-    formattedTime = formatSeconds(elapsedTime);
-  }
+  const stats = calculateStats(userInput, targetText, elapsedTime, mode);
 
-  let stats = calculateStats(userInput, targetText, elapsedTime, mode);
+  const progress = targetText.length
+    ? Math.min(100, (userInput.length / targetText.length) * 100)
+    : 0;
+
+  const handleModeChange = useCallback(
+    (modeKey: GameMode) => {
+      if (modeKey !== mode) setMode(modeKey);
+    },
+    [mode]
+  );
+
+  const modes: GameMode[] = ['classic', 'timer'];
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -54,17 +62,12 @@ export function App() {
 
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
             <div className="flex flex-wrap justify-end gap-2 rounded-3xl border border-white/5 bg-white/5 p-1 text-xs font-medium tracking-widest text-zinc-400 uppercase">
-              {['classic', 'timer'].map((modeKey) => {
+              {modes.map((modeKey) => {
                 const isActive = modeKey === mode;
-                const label = modeKey;
                 return (
                   <button
                     key={modeKey}
-                    onClick={() => {
-                      if (modeKey !== mode) {
-                        setMode(modeKey as GameMode);
-                      }
-                    }}
+                    onClick={() => handleModeChange(modeKey)}
                     className={`rounded-2xl px-3 py-1 transition-colors ${
                       isActive
                         ? 'bg-amber-400/20 text-amber-200 shadow-[0_0_0_1px_rgba(251,191,36,0.25)]'
@@ -72,7 +75,7 @@ export function App() {
                     }`}
                     aria-pressed={isActive}
                   >
-                    {label}
+                    {modeKey}
                   </button>
                 );
               })}
@@ -80,67 +83,41 @@ export function App() {
           </div>
         </header>
 
-        {/* Área principal de tipeo */}
         <div className="pt-2 pb-8">
           {gameState !== 'finished' ? (
             <>
               <section className="my-4 rounded-3xl border border-white/5 bg-zinc-950/70 p-8">
                 <div className="flex flex-col gap-6">
                   <div className="grid grid-cols-2 gap-4 text-sm text-zinc-400 md:grid-cols-4">
-                    <div className="rounded-2xl bg-white/5 p-4">
-                      <div className="text-xs tracking-widest text-zinc-500 uppercase">Ritmo</div>
-                      <div className="mt-2 text-3xl font-semibold text-amber-300">{stats?.wpm}</div>
-                      <p className="text-xs text-zinc-500">Palabras por minuto</p>
-                    </div>
-                    <div className="rounded-2xl bg-white/5 p-4">
-                      <div className="text-xs tracking-widest text-zinc-500 uppercase">
-                        Precisión
-                      </div>
-                      <div className="mt-2 text-3xl font-semibold text-emerald-400">
-                        {stats.accuracy}%
-                      </div>
-                      <p className="text-xs text-zinc-500">{stats.correctChars} correctos</p>
-                    </div>
-                    <div className="rounded-2xl bg-white/5 p-4">
-                      <div className="text-xs tracking-widest text-zinc-500 uppercase">
-                        {mode === 'classic' ? 'Tiempo' : 'Tiempo restante'}
-                      </div>
-                      <div className="mt-2 text-3xl font-semibold text-zinc-100">
-                        {formattedTime}
-                      </div>
-                      <p className="text-xs text-zinc-500">
-                        {mode === 'classic' ? 'En progreso' : 'Tiempo restante'}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl bg-white/5 p-4">
-                      <div className="text-xs tracking-widest text-zinc-500 uppercase">Errores</div>
-                      <div className="mt-2 text-3xl font-semibold text-rose-500">
-                        {stats.errors}
-                      </div>
-                      <p className="text-xs text-zinc-500">{userInput.length} caracteres</p>
-                    </div>
+                    <StatCard
+                      title="Ritmo"
+                      value={stats.wpm}
+                      subtitle="Palabras por minuto"
+                      color="amber"
+                    />
+                    <StatCard
+                      title="Precisión"
+                      value={`${stats.accuracy}%`}
+                      subtitle={`${stats.correctChars} correctos`}
+                      color="emerald"
+                    />
+                    <StatCard
+                      title={mode === 'classic' ? 'Tiempo' : 'Tiempo restante'}
+                      value={formattedTime}
+                      subtitle={mode === 'classic' ? 'En progreso' : 'Tiempo restante'}
+                    />
+                    <StatCard
+                      title="Errores"
+                      value={stats.errors}
+                      subtitle={`${userInput.length} caracteres`}
+                      color="rose"
+                    />
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs tracking-widest text-zinc-500 uppercase">
-                      <span>Progreso</span>
-                      <span className="text-amber-200">
-                        {((userInput.length / targetText.length) * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 transition-all"
-                        style={{
-                          width: `${((userInput.length / targetText.length) * 100).toFixed(0)}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <ProgressBar progress={progress} />
                 </div>
               </section>
 
-              {/* Texto a escribir */}
               <div
                 ref={textAreaRef}
                 className={`max-h-[400px] min-h-[300px] cursor-text rounded-3xl bg-black/40 p-8 focus-within:border-amber-300/60 ${
@@ -161,7 +138,6 @@ export function App() {
                 </div>
               </div>
 
-              {/* Input oculto */}
               <input
                 ref={hiddenInputRef}
                 type="text"
@@ -178,6 +154,23 @@ export function App() {
             <Results stats={stats} gameState={gameState} resetGame={resetGame} />
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressBar({ progress }: { progress: number }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between text-xs tracking-widest text-zinc-500 uppercase">
+        <span>Progreso</span>
+        <span className="text-amber-200">{progress.toFixed(0)}%</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 transition-all"
+          style={{ width: `${progress.toFixed(0)}%` }}
+        />
       </div>
     </div>
   );
