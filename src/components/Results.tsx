@@ -13,19 +13,21 @@ export function Results({ stats, gameState, resetGame }: ResultsProps) {
 
       {stats && (
         <>
-          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="rounded-lg bg-zinc-800 p-6">
+          <div className="mb-8 flex gap-6">
+            <div className="flex-1 rounded-lg bg-zinc-800 p-6">
               <div className="mb-2 text-3xl font-bold text-blue-600">{stats.wpm}</div>
               <div className="font-medium text-blue-800">Palabras por minuto</div>
             </div>
-            <div className="rounded-lg bg-zinc-800 p-6">
+            <div className="flex-1 rounded-lg bg-zinc-800 p-6">
               <div className="mb-2 text-3xl font-bold text-green-600">{stats.accuracy}%</div>
               <div className="font-medium text-green-800">Precisión</div>
             </div>
-            <div className="rounded-lg bg-zinc-800 p-6">
-              <div className="mb-2 text-3xl font-bold text-purple-600">{stats.timeElapsed}s</div>
-              <div className="font-medium text-purple-800">Tiempo total</div>
-            </div>
+            {stats.mode === 'classic' && (
+              <div className="flex-1 rounded-lg bg-zinc-800 p-6">
+                <div className="mb-2 text-3xl font-bold text-purple-600">{stats.timeElapsed}s</div>
+                <div className="font-medium text-purple-800">Tiempo total</div>
+              </div>
+            )}
           </div>
 
           <div className="mb-6 rounded-lg bg-zinc-800 p-6">

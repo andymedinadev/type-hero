@@ -1,6 +1,11 @@
-import type { TypingStats } from '../types';
+import type { GameMode, TypingStats } from '../types';
 
-export function calculateStats(input: string, target: string, timeMs: number): TypingStats {
+export function calculateStats(
+  input: string,
+  target: string,
+  timeMs: number,
+  mode: GameMode
+): TypingStats {
   const timeMinutes = timeMs / 60000 || 1 / 60;
   let correctChars = 0;
   let errors = 0;
@@ -24,5 +29,6 @@ export function calculateStats(input: string, target: string, timeMs: number): T
     correctChars,
     totalChars: target.length,
     errors,
+    mode,
   };
 }

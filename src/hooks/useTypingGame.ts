@@ -119,7 +119,7 @@ export function useTypingGame(mode: GameMode) {
     setGameState((prev) => {
       if (prev === 'finished') return prev;
 
-      const stats = calculateStats(userInput, targetText, elapsedTime);
+      const stats = calculateStats(userInput, targetText, elapsedTime, mode);
 
       setStats(stats);
 
