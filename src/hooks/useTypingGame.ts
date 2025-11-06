@@ -5,7 +5,7 @@ import { generateRandomText, splitTextIntoLines, calculateStats } from '../utils
 import type { TargetedEvent } from 'preact/compat';
 import type { TypingStats, GameState, GameMode } from '../types';
 
-export function useTypingGame(mode: GameMode = 'classic') {
+export function useTypingGame(mode: GameMode) {
   // Main states
   const [targetText, setTargetText] = useState('');
   const [userInput, setUserInput] = useState('');

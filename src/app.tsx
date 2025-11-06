@@ -1,7 +1,12 @@
+import { useState } from 'preact/hooks';
+
 import { TypingText, Results } from './components';
 import { useTypingGame } from './hooks';
+import type { GameMode } from './types';
 
 export function App() {
+  const [mode, setMode] = useState<GameMode>('classic');
+
   const {
     targetText,
     userInput,
@@ -15,14 +20,13 @@ export function App() {
     textAreaRef,
     elapsedTime,
     remainingTime,
-    mode,
     handleInputChange,
     handleKeyDown,
     focusTextArea,
     blurTextArea,
     resetGame,
     setIsTextFocused,
-  } = useTypingGame('timer');
+  } = useTypingGame(mode);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -30,6 +34,23 @@ export function App() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-4xl font-bold text-white">Type Hero</h1>
+        </div>
+        <div className="flex flex-col items-center">
+          <h2 className="m-2 text-xl">Mode</h2>
+          <div className="flex">
+            <button
+              className="m-2 rounded-2xl bg-blue-700 px-5 py-2.5 font-medium"
+              onClick={() => setMode('classic')}
+            >
+              Classic
+            </button>
+            <button
+              className="m-2 rounded-2xl bg-blue-700 px-5 py-2.5 font-medium"
+              onClick={() => setMode('timer')}
+            >
+              Timer
+            </button>
+          </div>
         </div>
 
         {/* Área principal de tipeo */}
