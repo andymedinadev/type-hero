@@ -112,12 +112,6 @@ export function useTypingGame(mode: GameMode) {
     if (value.length === targetText.length) {
       finishGame();
       setIsTextFocused(false);
-
-      if (elapsedTime > 0) {
-        const timeElapsed = elapsedTime * 1000;
-        const finalStats = calculateStats(value, targetText, timeElapsed);
-        setStats(finalStats);
-      }
     }
   };
 
