@@ -3,9 +3,9 @@ import { useState, useEffect, useRef, useCallback } from 'preact/hooks';
 import { generateRandomText, splitTextIntoLines, calculateStats } from '../utils';
 
 import type { TargetedEvent } from 'preact/compat';
-import type { TypingStats, GameState } from '../types';
+import type { TypingStats, GameState, GameMode } from '../types';
 
-export function useTypingGame() {
+export function useTypingGame(mode: GameMode = 'classic') {
   // Main states
   const [targetText, setTargetText] = useState('');
   const [userInput, setUserInput] = useState('');
@@ -136,16 +136,27 @@ export function useTypingGame() {
 
   // Contador de tiempo
   useEffect(() => {
-    if (gameState === 'typing') {
-      const interval = setInterval(() => {
-        setElapsedTime((prev) => (prev !== null ? prev + 1 : 1));
-      }, 1000);
+    if (gameState !== 'typing') return;
 
-      return () => clearInterval(interval);
-    } else if (gameState === 'waiting') {
-      setElapsedTime(0);
-    }
+    const interval = setInterval(() => setElapsedTime((t) => t + 1), 1000);
+
+    return () => clearInterval(interval);
   }, [gameState]);
+
+  // modo timer config
+  const TIME_LIMIT = 60;
+  const remainingTime = Math.max(0, TIME_LIMIT - elapsedTime);
+
+  if (mode === 'timer' && elapsedTime >= TIME_LIMIT) {
+    setGameState('finished');
+  }
+
+  // modo timer -> finalizar a los 60seg
+  useEffect(() => {
+    if (mode === 'timer' && gameState === 'typing' && elapsedTime >= 60) {
+      setGameState('finished');
+    }
+  }, [elapsedTime, gameState, mode]);
 
   // Manejar redimensionamiento de ventana
   useEffect(() => {
@@ -173,6 +184,8 @@ export function useTypingGame() {
     textContainerRef,
     textAreaRef,
     elapsedTime,
+    remainingTime,
+    mode,
     handleInputChange,
     handleKeyDown,
     focusTextArea,

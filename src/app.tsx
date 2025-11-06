@@ -14,13 +14,15 @@ export function App() {
     textContainerRef,
     textAreaRef,
     elapsedTime,
+    remainingTime,
+    mode,
     handleInputChange,
     handleKeyDown,
     focusTextArea,
     blurTextArea,
     resetGame,
     setIsTextFocused,
-  } = useTypingGame();
+  } = useTypingGame('timer');
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -49,8 +51,11 @@ export function App() {
                         Progreso: {userInput.length}/{targetText.length} caracteres
                       </div>
                       <div className="flex items-center gap-4">
-                        {elapsedTime !== null && (
+                        {elapsedTime !== null && mode === 'classic' && (
                           <span className="font-medium">Tiempo: {elapsedTime}s</span>
+                        )}
+                        {elapsedTime !== null && mode === 'timer' && (
+                          <span className="font-medium">{remainingTime}s restantes</span>
                         )}
                         <button
                           onClick={resetGame}

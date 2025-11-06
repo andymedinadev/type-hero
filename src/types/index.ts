@@ -8,3 +8,5 @@ export interface TypingStats {
 }
 
 export type GameState = 'waiting' | 'typing' | 'finished';
+
+export type GameMode = 'classic' | 'timer';
