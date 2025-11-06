@@ -3,29 +3,23 @@ import type { GameMode, TypingStats } from '../types';
 export function calculateStats(
   input: string,
   target: string,
-  timeMs: number,
+  elapsedSeconds: number,
   mode: GameMode
 ): TypingStats {
-  const timeMinutes = timeMs / 60000 || 1 / 60;
-  let correctChars = 0;
-  let errors = 0;
+  const correctChars = [...input].filter((c, i) => c === target[i]).length;
 
-  for (let i = 0; i < Math.min(input.length, target.length); i++) {
-    if (input[i] === target[i]) correctChars++;
-    else errors++;
-  }
+  const errors = Math.max(0, input.length - correctChars);
 
-  if (input.length < target.length) {
-    errors += target.length - input.length;
-  }
+  const accuracy = input.length ? Math.round((correctChars / input.length) * 100) : 100;
 
-  const wpm = Math.round(correctChars / 5 / timeMinutes);
-  const accuracy = Math.round((correctChars / target.length) * 100);
+  const minutesElapsed = elapsedSeconds / 60;
+
+  const wpm = minutesElapsed > 0 ? Math.round(correctChars / 5 / minutesElapsed) : 0;
 
   return {
-    wpm: wpm || 0,
-    accuracy: accuracy || 0,
-    timeElapsed: Math.round(timeMs / 1000),
+    wpm,
+    accuracy,
+    timeElapsed: Math.round(elapsedSeconds),
     correctChars,
     totalChars: target.length,
     errors,
