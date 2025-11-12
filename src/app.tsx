@@ -81,6 +81,13 @@ export function App() {
                 );
               })}
             </div>
+
+            <button
+              onClick={resetGame}
+              className="cursor-pointer self-end rounded-2xl border border-amber-500/40 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-200 transition-colors hover:border-amber-400 hover:bg-amber-400/20 md:self-auto"
+            >
+              Reiniciar
+            </button>
           </div>
         </header>
 
