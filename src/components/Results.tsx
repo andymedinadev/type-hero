@@ -1,3 +1,5 @@
+import { formatSeconds } from '../utils';
+
 import type { GameState, TypingStats } from '../types';
 
 interface ResultsProps {
@@ -7,62 +9,68 @@ interface ResultsProps {
 }
 
 export function Results({ stats, gameState, resetGame }: ResultsProps) {
+  if (!stats) return null;
+
+  const mainStats = [
+    {
+      label: 'Velocidad',
+      value: `${stats.wpm}`,
+      description: 'Palabras por minuto',
+      accent: 'from-amber-400/20 via-amber-400/10 to-transparent',
+    },
+    {
+      label: 'Precisión',
+      value: `${stats.accuracy}%`,
+      description: 'Exactitud total',
+      accent: 'from-emerald-400/20 via-emerald-400/10 to-transparent',
+    },
+    {
+      label: 'Tiempo usado',
+      value: formatSeconds(stats.timeElapsed),
+      description: '',
+      accent: 'from-indigo-400/20 via-indigo-400/10 to-transparent',
+    },
+  ] as const;
+
+  const detailStats = [
+    { label: 'Caract. escritos', value: stats.totalChars },
+    { label: 'Correctos', value: stats.correctChars },
+    { label: 'Errores', value: stats.errors },
+    { label: 'Palabras', value: Math.round(stats.totalChars / 5) },
+  ] as const;
+
   return (
-    <div className="rounded-lg bg-zinc-900 px-4 py-8 text-center">
-      <h2 className="mb-8 text-3xl font-bold text-white">¡Excelente trabajo!</h2>
+    <div className="flex flex-1 flex-col items-center justify-center gap-10 rounded-3xl border border-white/5 bg-zinc-950/80 p-10 text-center shadow-xl shadow-black/20 backdrop-blur">
+      <div>
+        <p className="text-sm tracking-[0.4em] text-amber-300 uppercase">Sesión completada</p>
+        <h2 className="mt-4 text-4xl font-semibold text-zinc-100">
+          {stats?.mode === 'timer' ? 'Modo temporizador' : 'Modo clásico'}
+        </h2>
+      </div>
 
       {stats && (
         <>
-          <div className="mb-8 flex gap-6">
-            <div className="flex-1 rounded-lg bg-zinc-800 p-6">
-              <div className="mb-2 text-3xl font-bold text-blue-600">{stats.wpm}</div>
-              <div className="font-medium text-blue-800">Palabras por minuto</div>
-            </div>
-            <div className="flex-1 rounded-lg bg-zinc-800 p-6">
-              <div className="mb-2 text-3xl font-bold text-green-600">{stats.accuracy}%</div>
-              <div className="font-medium text-green-800">Precisión</div>
-            </div>
-            {stats.mode === 'classic' && (
-              <div className="flex-1 rounded-lg bg-zinc-800 p-6">
-                <div className="mb-2 text-3xl font-bold text-purple-600">{stats.timeElapsed}s</div>
-                <div className="font-medium text-purple-800">Tiempo total</div>
-              </div>
-            )}
+          <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+            {mainStats.map((item) => (
+              <ResultMainStatCard key={item.label} {...item} />
+            ))}
           </div>
 
-          <div className="mb-6 rounded-lg bg-zinc-800 p-6">
-            <h3 className="mb-4 text-lg font-semibold text-white">Estadísticas detalladas</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-              <div>
-                <div className="font-medium text-white">Total de caracteres</div>
-                <div className="text-xl font-bold text-white">{stats.totalChars}</div>
-              </div>
-              <div>
-                <div className="font-medium text-white">Caracteres correctos</div>
-                <div className="text-xl font-bold text-green-600">{stats.correctChars}</div>
-              </div>
-              <div>
-                <div className="font-medium text-white">Errores</div>
-                <div className="text-xl font-bold text-red-600">{stats.errors}</div>
-              </div>
-              <div>
-                <div className="font-medium text-white">Velocidad promedio</div>
-                <div className="text-xl font-bold text-blue-600">{stats.wpm} ppm</div>
-              </div>
-            </div>
+          <div className="grid w-full grid-cols-2 gap-4 rounded-3xl border border-white/5 bg-white/5 p-6 text-left text-sm text-zinc-400 md:grid-cols-3 lg:grid-cols-4">
+            {detailStats.map((item) => (
+              <ResultDetailStatCard key={item.label} {...item} />
+            ))}
           </div>
         </>
       )}
 
       {gameState === 'finished' && (
-        <div className="text-center">
-          <button
-            onClick={resetGame}
-            className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-          >
-            Practicar de nuevo
-          </button>
-        </div>
+        <button
+          onClick={resetGame}
+          className="cursor-pointer rounded-2xl border border-amber-400/60 bg-amber-400/10 px-8 py-3 text-sm font-medium text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/20"
+        >
+          Practicar de nuevo
+        </button>
       )}
     </div>
   );
