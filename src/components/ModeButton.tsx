@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 
+import { MODES } from '../constants/modes';
 import type { GameMode } from '../types';
 
 interface ModelButtonProps {
@@ -9,10 +10,10 @@ interface ModelButtonProps {
   onClick: (modeKey: GameMode) => void;
 }
 
-const modeLabels: Record<GameMode, string> = { classic: 'Clásico', timer: 'Temporizador' };
-
 export function ModeButton({ modeKey, currentMode, disabled, onClick }: ModelButtonProps) {
   const active = modeKey === currentMode;
+
+  const label = MODES[modeKey].label;
 
   const className = clsx('rounded-2xl px-3 py-1 transition-colors', {
     'cursor-not-allowed opacity-40 text-zinc-500': disabled,
@@ -30,7 +31,7 @@ export function ModeButton({ modeKey, currentMode, disabled, onClick }: ModelBut
       className={className}
       aria-pressed={active}
     >
-      {modeLabels[modeKey]}
+      {label}
     </button>
   );
 }

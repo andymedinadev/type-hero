@@ -3,6 +3,7 @@ import { useState, useCallback } from 'preact/hooks';
 import { ModeButton, Results, StatCard, TypingText } from './components';
 import { useTypingGame } from './hooks';
 import { calculateStats, formatSeconds } from './utils';
+import { MODE_KEYS } from './constants/modes';
 
 import type { GameMode } from './types';
 
@@ -45,8 +46,6 @@ export function App() {
     [mode]
   );
 
-  const modes: GameMode[] = ['classic', 'timer'];
-
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="mx-auto w-full max-w-4xl">
@@ -63,7 +62,7 @@ export function App() {
 
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
             <div className="flex flex-wrap justify-end gap-2 rounded-3xl border border-white/5 bg-white/5 p-1 text-xs font-medium tracking-widest text-zinc-400 uppercase">
-              {modes.map((modeKey) => (
+              {MODE_KEYS.map((modeKey) => (
                 <ModeButton
                   key={modeKey}
                   modeKey={modeKey}
