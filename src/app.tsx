@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'preact/hooks';
 
-import { TypingText, StatCard, Results } from './components';
+import { ModeButton, Results, StatCard, TypingText } from './components';
 import { useTypingGame } from './hooks';
 import { calculateStats, formatSeconds } from './utils';
+
 import type { GameMode } from './types';
 
 export function App() {
@@ -62,24 +63,15 @@ export function App() {
 
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
             <div className="flex flex-wrap justify-end gap-2 rounded-3xl border border-white/5 bg-white/5 p-1 text-xs font-medium tracking-widest text-zinc-400 uppercase">
-              {modes.map((modeKey) => {
-                const isActive = modeKey === mode;
-                return (
-                  <button
-                    key={modeKey}
-                    disabled={gameState !== 'waiting'}
-                    onClick={() => handleModeChange(modeKey)}
-                    className={`rounded-2xl px-3 py-1 transition-colors ${
-                      isActive
-                        ? 'bg-amber-400/20 text-amber-200 shadow-[0_0_0_1px_rgba(251,191,36,0.25)]'
-                        : 'text-zinc-400 hover:text-zinc-100'
-                    }`}
-                    aria-pressed={isActive}
-                  >
-                    {modeKey}
-                  </button>
-                );
-              })}
+              {modes.map((modeKey) => (
+                <ModeButton
+                  key={modeKey}
+                  modeKey={modeKey}
+                  currentMode={mode}
+                  disabled={gameState !== 'waiting'}
+                  onClick={handleModeChange}
+                />
+              ))}
             </div>
 
             <button
