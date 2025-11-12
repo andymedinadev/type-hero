@@ -67,6 +67,7 @@ export function App() {
                 return (
                   <button
                     key={modeKey}
+                    disabled={gameState !== 'waiting'}
                     onClick={() => handleModeChange(modeKey)}
                     className={`rounded-2xl px-3 py-1 transition-colors ${
                       isActive
