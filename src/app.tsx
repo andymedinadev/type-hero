@@ -1,14 +1,15 @@
-import { useState, useCallback } from 'preact/hooks';
+import { useState, useCallback, useEffect } from 'preact/hooks';
 
 import { ModeButton, Results, StatCard, TypingText } from './components';
 import { useTypingGame } from './hooks';
 import { calculateStats, formatSeconds } from './utils';
 import { MODE_KEYS } from './constants/modes';
 
-import type { GameMode } from './types';
+import type { TypingStats, GameMode } from './types';
 
 export function App() {
   const [mode, setMode] = useState<GameMode>('classic');
+  const [roundStats, setRoundStats] = useState<TypingStats | null>(null);
 
   const {
     targetText,
@@ -46,6 +47,17 @@ export function App() {
     [mode]
   );
 
+  const handleReset = () => {
+    setRoundStats(null);
+    resetGame();
+  };
+
+  useEffect(() => {
+    if (gameState !== 'finished' || !stats || roundStats) return;
+
+    setRoundStats(stats);
+  }, [gameState, stats, roundStats]);
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="mx-auto w-full max-w-4xl">
@@ -67,14 +79,14 @@ export function App() {
                   key={modeKey}
                   modeKey={modeKey}
                   currentMode={mode}
-                  disabled={gameState !== 'waiting'}
+                  disabled={gameState === 'typing'}
                   onClick={handleModeChange}
                 />
               ))}
             </div>
 
             <button
-              onClick={resetGame}
+              onClick={handleReset}
               className="cursor-pointer self-end rounded-2xl border border-amber-500/40 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-200 transition-colors hover:border-amber-400 hover:bg-amber-400/20 md:self-auto"
             >
               Reiniciar
@@ -150,7 +162,7 @@ export function App() {
               />
             </>
           ) : (
-            <Results stats={stats} gameState={gameState} resetGame={resetGame} />
+            <Results roundStats={roundStats} gameState={gameState} resetGame={handleReset} />
           )}
         </div>
       </div>
