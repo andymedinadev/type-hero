@@ -67,3 +67,36 @@ export function Results({ stats, gameState, resetGame }: ResultsProps) {
     </div>
   );
 }
+
+interface ResultMainStatCardProps {
+  label: string;
+  value: string | number;
+  description: string;
+  accent: string;
+}
+
+export function ResultMainStatCard({ label, value, description, accent }: ResultMainStatCardProps) {
+  return (
+    <div className={`rounded-3xl border border-white/10 bg-gradient-to-br ${accent} p-6`}>
+      <div className="text-xs tracking-widest text-zinc-200/70 uppercase">{label}</div>
+      <div className="mt-3 text-4xl font-semibold text-zinc-100">{value}</div>
+      <p className="text-xs text-zinc-200/60">{description}</p>
+    </div>
+  );
+}
+
+interface ResultDetailStatCardProps {
+  label: string;
+  value: string | number;
+}
+
+export function ResultDetailStatCard({ label, value }: ResultDetailStatCardProps) {
+  return (
+    <div className="flex justify-center">
+      <div className="text-center">
+        <p className="text-xs tracking-widest text-zinc-500 uppercase">{label}</p>
+        <p className="mt-2 text-2xl font-semibold text-zinc-100">{value}</p>
+      </div>
+    </div>
+  );
+}
