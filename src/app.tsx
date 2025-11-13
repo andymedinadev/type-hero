@@ -1,12 +1,15 @@
-import { useState, useCallback } from 'preact/hooks';
+import { useState, useCallback, useEffect } from 'preact/hooks';
 
-import { TypingText, StatCard, Results } from './components';
+import { ModeButton, Results, StatCard, TypingText } from './components';
 import { useTypingGame } from './hooks';
 import { calculateStats, formatSeconds } from './utils';
-import type { GameMode } from './types';
+import { MODE_KEYS } from './constants/modes';
+
+import type { TypingStats, GameMode } from './types';
 
 export function App() {
   const [mode, setMode] = useState<GameMode>('classic');
+  const [roundStats, setRoundStats] = useState<TypingStats | null>(null);
 
   const {
     targetText,
@@ -44,10 +47,19 @@ export function App() {
     [mode]
   );
 
-  const modes: GameMode[] = ['classic', 'timer'];
+  const handleReset = () => {
+    setRoundStats(null);
+    resetGame();
+  };
+
+  useEffect(() => {
+    if (gameState !== 'finished' || !stats || roundStats) return;
+
+    setRoundStats(stats);
+  }, [gameState, stats, roundStats]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950 p-4">
       <div className="mx-auto w-full max-w-4xl">
         <header className="flex flex-col gap-5 rounded-3xl border border-white/5 bg-zinc-950/70 px-6 py-5 backdrop-blur md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
@@ -62,25 +74,23 @@ export function App() {
 
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
             <div className="flex flex-wrap justify-end gap-2 rounded-3xl border border-white/5 bg-white/5 p-1 text-xs font-medium tracking-widest text-zinc-400 uppercase">
-              {modes.map((modeKey) => {
-                const isActive = modeKey === mode;
-                return (
-                  <button
-                    key={modeKey}
-                    disabled={gameState !== 'waiting'}
-                    onClick={() => handleModeChange(modeKey)}
-                    className={`rounded-2xl px-3 py-1 transition-colors ${
-                      isActive
-                        ? 'bg-amber-400/20 text-amber-200 shadow-[0_0_0_1px_rgba(251,191,36,0.25)]'
-                        : 'text-zinc-400 hover:text-zinc-100'
-                    }`}
-                    aria-pressed={isActive}
-                  >
-                    {modeKey}
-                  </button>
-                );
-              })}
+              {MODE_KEYS.map((modeKey) => (
+                <ModeButton
+                  key={modeKey}
+                  modeKey={modeKey}
+                  currentMode={mode}
+                  disabled={gameState === 'typing'}
+                  onClick={handleModeChange}
+                />
+              ))}
             </div>
+
+            <button
+              onClick={handleReset}
+              className="cursor-pointer self-end rounded-2xl border border-amber-500/40 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-200 transition-colors hover:border-amber-400 hover:bg-amber-400/20 md:self-auto"
+            >
+              Reiniciar
+            </button>
           </div>
         </header>
 
@@ -152,7 +162,7 @@ export function App() {
               />
             </>
           ) : (
-            <Results stats={stats} gameState={gameState} resetGame={resetGame} />
+            <Results roundStats={roundStats} gameState={gameState} resetGame={handleReset} />
           )}
         </div>
       </div>

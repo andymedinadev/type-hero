@@ -3,40 +3,40 @@ import { formatSeconds } from '../utils';
 import type { GameState, TypingStats } from '../types';
 
 interface ResultsProps {
-  stats: TypingStats | null;
+  roundStats: TypingStats | null;
   gameState: GameState;
   resetGame: () => void;
 }
 
-export function Results({ stats, gameState, resetGame }: ResultsProps) {
-  if (!stats) return null;
+export function Results({ roundStats, gameState, resetGame }: ResultsProps) {
+  if (!roundStats) return null;
 
   const mainStats = [
     {
       label: 'Velocidad',
-      value: `${stats.wpm}`,
+      value: `${roundStats.wpm}`,
       description: 'Palabras por minuto',
-      accent: 'from-amber-400/20 via-amber-400/10 to-transparent',
+      bgColor: 'bg-amber-400/15',
     },
     {
       label: 'Precisión',
-      value: `${stats.accuracy}%`,
+      value: `${roundStats.accuracy}%`,
       description: 'Exactitud total',
-      accent: 'from-emerald-400/20 via-emerald-400/10 to-transparent',
+      bgColor: 'bg-emerald-400/15',
     },
     {
       label: 'Tiempo usado',
-      value: formatSeconds(stats.timeElapsed),
+      value: formatSeconds(roundStats.timeElapsed),
       description: '',
-      accent: 'from-indigo-400/20 via-indigo-400/10 to-transparent',
+      bgColor: 'bg-indigo-400/15',
     },
   ] as const;
 
   const detailStats = [
-    { label: 'Caract. escritos', value: stats.totalChars },
-    { label: 'Correctos', value: stats.correctChars },
-    { label: 'Errores', value: stats.errors },
-    { label: 'Palabras', value: Math.round(stats.totalChars / 5) },
+    { label: 'Caract. escritos', value: roundStats.totalChars },
+    { label: 'Correctos', value: roundStats.correctChars },
+    { label: 'Errores', value: roundStats.errors },
+    { label: 'Palabras', value: Math.round(roundStats.totalChars / 5) },
   ] as const;
 
   return (
@@ -44,11 +44,11 @@ export function Results({ stats, gameState, resetGame }: ResultsProps) {
       <div>
         <p className="text-sm tracking-[0.4em] text-amber-300 uppercase">Sesión completada</p>
         <h2 className="mt-4 text-4xl font-semibold text-zinc-100">
-          {stats?.mode === 'timer' ? 'Modo temporizador' : 'Modo clásico'}
+          {roundStats?.mode === 'timer' ? 'Modo temporizador' : 'Modo clásico'}
         </h2>
       </div>
 
-      {stats && (
+      {roundStats && (
         <>
           <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
             {mainStats.map((item) => (
@@ -80,12 +80,17 @@ interface ResultMainStatCardProps {
   label: string;
   value: string | number;
   description: string;
-  accent: string;
+  bgColor: string;
 }
 
-export function ResultMainStatCard({ label, value, description, accent }: ResultMainStatCardProps) {
+export function ResultMainStatCard({
+  label,
+  value,
+  description,
+  bgColor,
+}: ResultMainStatCardProps) {
   return (
-    <div className={`rounded-3xl border border-white/10 bg-gradient-to-br ${accent} p-6`}>
+    <div className={`rounded-3xl border border-white/10 ${bgColor} p-6`}>
       <div className="text-xs tracking-widest text-zinc-200/70 uppercase">{label}</div>
       <div className="mt-3 text-4xl font-semibold text-zinc-100">{value}</div>
       <p className="text-xs text-zinc-200/60">{description}</p>
