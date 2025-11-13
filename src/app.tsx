@@ -59,7 +59,7 @@ export function App() {
   }, [gameState, stats, roundStats]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950 p-4">
       <div className="mx-auto w-full max-w-4xl">
         <header className="flex flex-col gap-5 rounded-3xl border border-white/5 bg-zinc-950/70 px-6 py-5 backdrop-blur md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
